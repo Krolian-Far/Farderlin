@@ -172,6 +172,9 @@
 
 	SSgamemode.store_roundend_data()
 
+	if(CONFIG_GET(flag/persistent_save_enabled))
+		SSpersistence.save_world()
+
 	CHECK_TICK
 
 	//These need update to actually reflect the real antagonists

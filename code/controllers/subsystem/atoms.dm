@@ -8,6 +8,7 @@ SUBSYSTEM_DEF(atoms)
 	var/old_initialized
 
 	var/list/late_loaders = list()
+	var/list/persistent_loaders = list()
 
 	var/list/BadInitializeCalls = list()
 
@@ -67,6 +68,18 @@ SUBSYSTEM_DEF(atoms)
 
 	testing("[length(queued_deletions)] atoms were queued for deletion.")
 	queued_deletions.Cut()
+
+	if(persistent_loaders.len)
+		if(CONFIG_GET(flag/persistent_save_enabled))
+			for(var/I in 1 to persistent_loaders.len)
+				var/atom/A = persistent_loaders[I]
+				//I hate that we need this
+				if(QDELETED(A))
+					continue
+				A.PersistentInitialize()
+			testing("Persistent initialized [persistent_loaders.len] atoms")
+		persistent_loaders.Cut()
+
 
 /datum/controller/subsystem/atoms/proc/InitAtom(atom/A, list/arguments)
 	var/the_type = A.type
