@@ -163,8 +163,8 @@ SUBSYSTEM_DEF(persistence)
 ///Returns the path to persistence maps directory based on current timestamp format via YYYY-MM-DD_UTC_hh.mm.ss
 /datum/controller/subsystem/persistence/proc/get_current_persistence_map_directory()
 	var/realtime = world.realtime
-	var/time  = realtime //Probably bad but I can't be bothered right now
-	var/map_directory = MAP_PERSISTENT_DIRECTORY + time
+	var/timestamp_utc  = time2text(realtime, "YYYY-MM-DD_UTC_hh.mm.ss")
+	var/map_directory = MAP_PERSISTENT_DIRECTORY + timestamp_utc
 	return map_directory
 
 ///Deletes empty save directories and removes the oldest saves if the total count exceeds the max autosaves allowed in config
@@ -322,15 +322,15 @@ SUBSYSTEM_DEF(persistence)
 		level_traits += list(z_traits)
 
 		// skip saving certain z-levels depending on config settings
-		if(!persistent_save_z_levels[ZTRAIT_CENTCOM] && is_centcom_level(z))
+		if(!persistent_save_z_levels[lowertext(ZTRAIT_CENTCOM)] && is_centcom_level(z))
 			continue
-		else if(!persistent_save_z_levels[ZTRAIT_STATION] && is_station_level(z))
+		else if(!persistent_save_z_levels[lowertext(ZTRAIT_STATION)] && is_station_level(z))
 			continue
-		else if(!persistent_save_z_levels[ZTRAIT_MINING] && is_mining_level(z))
+		else if(!persistent_save_z_levels[lowertext(ZTRAIT_MINING)] && is_mining_level(z))
 			continue
-		else if(!persistent_save_z_levels[ZTRAIT_RESERVED] && is_reserved_level(z)) // for shuttles in transit (hyperspace)
+		else if(!persistent_save_z_levels[lowertext(ZTRAIT_RESERVED)] && is_reserved_level(z)) // for shuttles in transit (hyperspace)
 			continue
-		else if(!persistent_save_z_levels[ZTRAIT_AWAY] && is_away_level(z)) // gateway away missions
+		else if(!persistent_save_z_levels[lowertext(ZTRAIT_AWAY)] && is_away_level(z)) // gateway away missions
 			continue
 
 		var/bottom_z = z
