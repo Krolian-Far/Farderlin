@@ -1,5 +1,9 @@
 //Bits to save
 #define SAVE_OBJECTS (1 << 1) //! Save objects?
+/// Save objects variables from obj.get_save_vars() and obj.get_custom_save_vars()
+#define SAVE_OBJECTS_VARIABLES (1 << 2)
+/// Save objects custom properties from obj.on_object_saved()
+#define SAVE_OBJECTS_PROPERTIES (1 << 3)
 #define SAVE_MOBS (1 << 2) //! Save Mobs?
 #define SAVE_TURFS (1 << 3) //! Save turfs?
 #define SAVE_AREAS (1 << 4) //! Save areas?

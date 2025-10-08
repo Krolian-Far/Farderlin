@@ -217,20 +217,21 @@ SUBSYSTEM_DEF(mapping)
 
 /datum/controller/subsystem/mapping/proc/loadWorld()
 	var/list/FailedZs = list()
+	var/list/persistent_save_z_levels = CONFIG_GET(keyed_list/persistent_save_z_levels)
 	InitializeDefaultZLevels()
 	station_start = world.maxz + 1
 
 	#ifdef TESTING
 	INIT_ANNOUNCE("Loading [config.map_name]...")
 	#endif
-		if(CONFIG_GET(flag/persistent_save_enabled) && persistent_save_z_levels[ZTRAIT_STATION] && SSpersistence.map_configs_cache?[ZTRAIT_STATION])
-			for(var/datum/map_config/persistent_map in SSpersistence.map_configs_cache[ZTRAIT_STATION])
+	if(CONFIG_GET(flag/persistent_save_enabled) && persistent_save_z_levels[ZTRAIT_STATION] && SSpersistence.map_configs_cache?[ZTRAIT_STATION])
+		for(var/datum/map_config/persistent_map in SSpersistence.map_configs_cache[ZTRAIT_STATION])
 			if(IS_PERSISTENT_MAP_LOADED(persistent_map.map_file))
 				continue
 
-			LoadGroup(FailedZs, persistent_map.map_name, persistent_map.map_path, persistent_map.map_file, persistent_map.traits, null, height_autosetup = persistent_map.height_autosetup)
-		else
-			LoadGroup(FailedZs, "Station", config.map_path, config.map_file, config.traits, ZTRAITS_TOWN, delve = config.delve)
+			LoadGroup(FailedZs, persistent_map.map_name, persistent_map.map_path, persistent_map.map_file, persistent_map.traits, null, delve = persistent_map.delve)
+	else
+		LoadGroup(FailedZs, "Station", config.map_path, config.map_file, config.traits, ZTRAITS_TOWN, delve = config.delve)
 	var/list/otherZ = list()
 	for(var/map_json in config.other_z)
 		otherZ += load_map_config(map_json)

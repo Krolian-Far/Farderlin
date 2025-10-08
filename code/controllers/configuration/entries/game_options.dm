@@ -390,12 +390,10 @@
 /datum/config_entry/keyed_list/persistent_save_z_levels
 	key_mode = KEY_MODE_TEXT
 	value_mode = VALUE_MODE_FLAG
-	lowercase_key = FALSE //The macros are written the exact same way as their values
 /// Include specific save flags that determines types and data to save and load
 /datum/config_entry/keyed_list/persistent_save_flags
 	key_mode = KEY_MODE_TEXT
 	value_mode = VALUE_MODE_FLAG
-	lowercase_key = FALSE
 /// If enabled, disables procedural grid generation and loads the pre-configured layout from z-level JSONs.
 /datum/config_entry/flag/persistent_use_static_map_grid
 /// Period of time in hours between map autosaves (set to -1 to only allow saving when server reboots)

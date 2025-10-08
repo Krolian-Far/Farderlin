@@ -267,6 +267,23 @@
 	set waitfor = FALSE
 
 /**
+ * Similar to [LateInitialize], executes code necessary for atoms loaded from persistence that require extra setup.
+ *
+ * This procedure is called only when an atom is created via mapload and when CONFIG_GET(flag/persistent_save_enabled) is enabled.
+ * It runs immediately after all saved variables have been restored, after both [Initialize] and [LateInitialize],
+ * but before general post-initialization signals are sent.
+ *
+ * It is the ideal place to run code that restores the previous state of atoms, such as:
+ * - Calling update_appearance() to correct the visual state based on restored variables.
+ * - Reinserting contents into storage atoms (e.g., lockers, bags) after they were temporarily moved out during the persistence save process.
+ *
+ * Atoms created at runtime (non-mapload) will skip this call.
+ */
+/atom/proc/PersistentInitialize()
+	set waitfor = FALSE
+	SHOULD_CALL_PARENT(FALSE)
+
+/**
  * Top level of the destroy chain for most atoms
  *
  * Cleans up the following:

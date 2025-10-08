@@ -163,8 +163,8 @@ SUBSYSTEM_DEF(persistence)
 ///Returns the path to persistence maps directory based on current timestamp format via YYYY-MM-DD_UTC_hh.mm.ss
 /datum/controller/subsystem/persistence/proc/get_current_persistence_map_directory()
 	var/realtime = world.realtime
-	var/timestamp_utc  = time2text(realtime, "YYYY-MM-DD_UTC_hh.mm.ss", TIMEZONE_UTC)
-	var/map_directory = MAP_PERSISTENT_DIRECTORY + timestamp_utc
+	var/time  = realtime //Probably bad but I can't be bothered right now
+	var/map_directory = MAP_PERSISTENT_DIRECTORY + time
 	return map_directory
 
 ///Deletes empty save directories and removes the oldest saves if the total count exceeds the max autosaves allowed in config
@@ -359,10 +359,11 @@ SUBSYSTEM_DEF(persistence)
 		var/map_path = copytext(map_save_directory, 7) // drop the "_maps/" from directory
 
 		var/json_data = list(
-			"map_name" = level_to_check.name || CUSTOM_MAP_PATH,
+			"map_name" = level_to_check.name,
 			"map_path" = map_path,
 			"map_file" = "[z].dmm",
 			"traits" = level_traits,
+			"delve" = level_to_check.delve,
 		)
 
 		rustg_file_write(json_encode(json_data, JSON_PRETTY_PRINT), "[map_save_directory]/[z].json")

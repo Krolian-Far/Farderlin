@@ -32,11 +32,11 @@
 	var/list/other_z
 	var/delve = 0
 
-/proc/load_map_config(filename = "data/next_map.json", default_to_van, delete_after, error_if_missing = TRUE)
+/proc/load_map_config(filename = "data/next_map.json", default_to_van, delete_after, error_if_missing = TRUE, persistence_save = FALSE)
 	var/datum/map_config/config = new
 	if (default_to_van)
 		return config
-	if (!config.LoadConfig(filename, error_if_missing))
+	if (!config.LoadConfig(filename, error_if_missing) && !CONFIG_GET(flag/persistent_save_enabled))
 		qdel(config)
 		if(default_to_van)
 			config = new /datum/map_config
@@ -46,7 +46,7 @@
 		return config
 
 #define CHECK_EXISTS(X) if(!istext(json[X])) { log_world("[##X] missing from json!"); return; }
-/datum/map_config/proc/LoadConfig(filename, error_if_missing)
+/datum/map_config/proc/LoadConfig(filename, error_if_missing, persistence_save)
 	if(!fexists(filename))
 		if(error_if_missing)
 			log_world("map_config not found: [filename]")
@@ -95,17 +95,21 @@
 		return
 
 	traits = json["traits"]
-	// "traits": [{"Linkage": "Cross"}, {"Space Ruins": true}]
-	if (islist(traits))
-		// "Station" is set by default, but it's assumed if you're setting
-		// traits you want to customize which level is cross-linked
-		for (var/level in traits)
-			if (!(ZTRAIT_STATION in level))
-				level[ZTRAIT_STATION] = TRUE
-	// "traits": null or absent -> default
-	else if (!isnull(traits))
-		log_world("map_config traits is not a list!")
-		return
+	// When a map is saved and loaded via persistence_save, all traits are explicitly
+	// written to the JSON. We must bypass inserting ZTRAIT_STATION automatically otherwise
+	// space/mining/etc. z-levels would have ZTRAIT_STATION inserted into their JSONs
+	if (!persistence_save)
+		if (islist(traits))
+			// "traits": [{"Linkage": "Cross"}, {"Space Ruins": true}]
+			for (var/level in traits)
+				// for regular maps (Meta, Delta, etc.) ZTRAIT_STATION is automatically added to a z-level's custom traits since the default JSON will have it omitted
+				if (!(ZTRAIT_STATION in level)) // unless the trait is explicitly disabled in the JSON
+					level[ZTRAIT_STATION] = TRUE
+
+		// "traits": null or absent -> default
+		else if (!isnull(traits))
+			log_world("map_config traits is not a list!")
+			return
 
 	var/temp = json["space_ruin_levels"]
 	if (isnum(temp))
