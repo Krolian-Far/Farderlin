@@ -227,7 +227,7 @@ SUBSYSTEM_DEF(persistence)
 	for(var/json_file in last_save_files)
 		// need to reformat the file name and directory to work with load_map_config()
 		json_file = copytext(json_file, 1, -5) // drop the ".json" from file name
-		var/datum/map_config/map_config = load_map_config(json_file, last_save, persistence_save = TRUE)
+		var/datum/map_config/map_config = load_map_config("[last_save]/[json_file].json", persistence_save = TRUE)
 
 		// for persistent autosaves, the name is always a number which indicates the z-level
 		var/current_z = map_config.map_name
@@ -236,22 +236,22 @@ SUBSYSTEM_DEF(persistence)
 
 		// for multi-z maps if a trait is found on ANY z-levels, the entire map is considered to have that trait
 		for(var/level in map_config.traits)
-			if(persistent_save_z_levels[ZTRAIT_CENTCOM] && (ZTRAIT_CENTCOM in level))
+			if(persistent_save_z_levels[lowertext(ZTRAIT_CENTCOM)] && (ZTRAIT_CENTCOM in level))
 				LAZYINITLIST(matching_z_levels[ZTRAIT_CENTCOM])
 				matching_z_levels[ZTRAIT_CENTCOM] |= map_config
-			else if(persistent_save_z_levels[ZTRAIT_STATION] && (ZTRAIT_STATION in level))
+			else if(persistent_save_z_levels[lowertext(ZTRAIT_STATION)] && (ZTRAIT_STATION in level))
 				LAZYINITLIST(matching_z_levels[ZTRAIT_STATION])
 				matching_z_levels[ZTRAIT_STATION] |= map_config
-			else if(persistent_save_z_levels[ZTRAIT_MINING] && (ZTRAIT_MINING in level))
+			else if(persistent_save_z_levels[lowertext(ZTRAIT_MINING)] && (ZTRAIT_MINING in level))
 				LAZYINITLIST(matching_z_levels[ZTRAIT_MINING])
 				matching_z_levels[ZTRAIT_MINING] |= map_config
-			else if(persistent_save_z_levels[ZTRAIT_SPACE_RUINS] && (ZTRAIT_SPACE_RUINS in level))
+			else if(persistent_save_z_levels[lowertext(ZTRAIT_SPACE_RUINS)] && (ZTRAIT_SPACE_RUINS in level))
 				LAZYINITLIST(matching_z_levels[ZTRAIT_SPACE_RUINS])
 				matching_z_levels[ZTRAIT_SPACE_RUINS] |= map_config
-			else if(persistent_save_z_levels[ZTRAIT_RESERVED] && (ZTRAIT_RESERVED in level)) // for shuttles in transit (hyperspace)
+			else if(persistent_save_z_levels[lowertext(ZTRAIT_RESERVED)] && (ZTRAIT_RESERVED in level)) // for shuttles in transit (hyperspace)
 				LAZYINITLIST(matching_z_levels[ZTRAIT_RESERVED])
 				matching_z_levels[ZTRAIT_RESERVED] |= map_config
-			else if(persistent_save_z_levels[ZTRAIT_AWAY] && (ZTRAIT_AWAY in level)) // gateway away missions
+			else if(persistent_save_z_levels[lowertext(ZTRAIT_AWAY)] && (ZTRAIT_AWAY in level)) // gateway away missions
 				LAZYINITLIST(matching_z_levels[ZTRAIT_AWAY])
 				matching_z_levels[ZTRAIT_AWAY] |= map_config
 
