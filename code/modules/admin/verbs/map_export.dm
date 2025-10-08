@@ -1,3 +1,10 @@
+/client/proc/map_export_all()
+	set category = "Debug"
+	set name = "Map Export All"
+	set desc = "Select a part of the map by coordinates and download it."
+
+	SSpersistence.save_world()
+
 /client/proc/map_export()
 	set category = "Debug"
 	set name = "Map Export"
